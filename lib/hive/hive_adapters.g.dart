@@ -52,6 +52,8 @@ class BetAdapter extends TypeAdapter<Bet> {
   bool operator ==(Object other) => identical(this, other) || other is BetAdapter && runtimeType == other.runtimeType && typeId == other.typeId;
 }
 
+// NOTE : Fichier modifié manuellement pour supprimer 'videoUrl'.
+// Idéalement, il faudrait regénérer ce fichier avec `flutter pub run build_runner build`.
 class DataBetAdapter extends TypeAdapter<DataBet> {
   @override
   final typeId = 1;
@@ -60,20 +62,22 @@ class DataBetAdapter extends TypeAdapter<DataBet> {
   DataBet read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read()};
-    return DataBet(id: fields[0] as String, videoUrl: fields[1] as String, imgUrl: fields[2] as String, metadata: fields[3] as String?);
+    return DataBet(
+      id: fields[0] as String,
+      imgUrl: fields[1] as String, 
+      metadata: fields[2] as String?,
+    );
   }
 
   @override
   void write(BinaryWriter writer, DataBet obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(3) // Le nombre de champs est maintenant 3
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.videoUrl)
-      ..writeByte(2)
       ..write(obj.imgUrl)
-      ..writeByte(3)
+      ..writeByte(2)
       ..write(obj.metadata);
   }
 

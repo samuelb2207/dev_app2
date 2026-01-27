@@ -1,8 +1,8 @@
 import 'dart:convert';
-
 import 'package:esme2526/datas/bet_repository_hive.dart';
 import 'package:esme2526/datas/user_repository_interface.dart';
 import 'package:esme2526/models/bet.dart';
+import 'package:esme2526/models/data_bet.dart';
 import 'package:esme2526/models/user.dart';
 import 'package:esme2526/models/wallet.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -11,12 +11,10 @@ class UserRepository implements UserRepositoryInterface {
   @override
   Future<User> getUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    // Check if user data exists
     final userId = prefs.getString('user');
 
     if (userId == null) {
-      // No user data exists, create and save initial user
+      // No user data exists, create and save initial user and bets
       final initialUser = User(
         id: "1",
         imgProfilUrl: "https://assets.codepen.io/1477099/internal/avatars/users/default.png",
@@ -28,10 +26,25 @@ class UserRepository implements UserRepositoryInterface {
         wishlistedBets: [],
       );
       await saveUser(initialUser);
+
+      final worldCupBet = Bet(
+        id: 'world-cup-2026-france',
+        title: "France vainqueur de la Coupe du Monde 2026",
+        description: "Les Bleus favoris pour la prochaine coupe du monde ?",
+        odds: 6.0,
+        startTime: DateTime(2026, 06, 11),
+        endTime: DateTime(2026, 07, 19),
+        dataBet: DataBet(
+          id: 'data-wc-2026',
+          // On ne garde que l'URL de l'image
+          imgUrl: 'https://upload.wikimedia.org/wikipedia/fr/thumb/c/c3/2026_FIFA_World_Cup_Logo.svg/1200px-2026_FIFA_World_Cup_Logo.svg.png',
+        )
+      );
+      await BetRepositoryHive().saveBets([worldCupBet]);
+      
       return initialUser;
     }
 
-    // User data exists, load from SharedPreferences
     final imgProfilUrl = prefs.getString('imgProfilUrl') ?? "";
     final name = prefs.getString('name') ?? "";
     final walletJson = prefs.getString('wallet');
@@ -40,7 +53,6 @@ class UserRepository implements UserRepositoryInterface {
     final canceledBetIds = prefs.getStringList('canceledBets') ?? [];
     final wishlistedBetIds = prefs.getStringList('wishlistedBets') ?? [];
 
-    // Parse wallet
     Wallet wallet;
     if (walletJson != null) {
       final walletMap = jsonDecode(walletJson) as Map<String, dynamic>;
@@ -49,7 +61,6 @@ class UserRepository implements UserRepositoryInterface {
       wallet = Wallet(id: "1", tokens: 100);
     }
 
-    // Get bet objects from repository
     final allBets = await BetRepositoryHive().getBets();
     final betsById = {for (var bet in allBets) bet.id: bet};
 

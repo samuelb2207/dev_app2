@@ -23,28 +23,21 @@ class UserBetRepositoryHive implements UserBetRepositoryInterface {
   @override
   Stream<List<UserBet>> getUserBetsStream() async* {
     final box = await _userBetsBoxFuture;
-    // Emit initial list of user bets
-    final initialUserBets = box.values.toList();
-    yield initialUserBets;
+    yield box.values.toList();
 
-    // Watch for changes and emit updated list
-    yield* box
-        .watch()
-        .asyncMap((event) async {
-          await Future.microtask(() {});
-          return box.values.toList();
-        })
-        .distinct((prev, next) {
-          if (prev.length != next.length) return false;
-          final prevIds = prev.map((b) => b.id).toSet();
-          final nextIds = next.map((b) => b.id).toSet();
-          return prevIds.length == nextIds.length && prevIds.every((id) => nextIds.contains(id));
-        });
+    yield* box.watch().map((event) => box.values.toList());
   }
 
   @override
   Future<void> saveUserBet(UserBet userBet) async {
     final box = await _userBetsBoxFuture;
-    await box.add(userBet);
+    // On utilise l'ID du pari comme clé pour une suppression facile
+    await box.put(userBet.id, userBet);
+  }
+
+  // NOUVEAU : Fonction pour supprimer un pari utilisateur
+  Future<void> deleteUserBet(String userBetId) async {
+    final box = await _userBetsBoxFuture;
+    await box.delete(userBetId);
   }
 }
