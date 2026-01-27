@@ -92,7 +92,6 @@ class _BetPageState extends State<BetPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // NOUVEAU : La Bet Card avec fond d'image
             _buildBetCard(context),
             const SizedBox(height: 30),
             if (_isNfcAuthorized)
@@ -112,17 +111,15 @@ class _BetPageState extends State<BetPage> {
       elevation: 8.0,
       child: Stack(
         children: [
-          // Fond d'image
           Container(
             height: 200,
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: NetworkImage('https://images.pexels.com/photos/270085/pexels-photo-270085.jpeg'), // Image de stade
+                image: NetworkImage('https://images.pexels.com/photos/270085/pexels-photo-270085.jpeg'),
                 fit: BoxFit.cover,
               ),
             ),
           ),
-          // Overlay sombre
           Container(
             height: 200,
             decoration: BoxDecoration(
@@ -133,40 +130,17 @@ class _BetPageState extends State<BetPage> {
               ),
             ),
           ),
-          // Contenu texte et bouton
           Positioned.fill(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          widget.bet.description, // Texte dynamique
-                          style: GoogleFonts.roboto(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
-                        ),
-                      ),
-                      Text(
-                        '${widget.bet.startTime.day}/${widget.bet.startTime.month}/${widget.bet.startTime.year}',
-                        style: GoogleFonts.roboto(color: Colors.white70, fontSize: 14),
-                      ),
-                    ],
-                  ),
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: ElevatedButton(
-                      onPressed: () { /* Pour l'instant, le clic est géré sur la page d'accueil */ },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.secondary,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                      ),
-                      child: Text('Cote : ${widget.bet.odds.toStringAsFixed(2)}'),
-                    ),
+                  Text(
+                    widget.bet.description,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.roboto(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
                   ),
                 ],
               ),

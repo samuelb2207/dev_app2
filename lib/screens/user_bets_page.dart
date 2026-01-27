@@ -85,7 +85,8 @@ class UserBetsPage extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('Cote : ${betDetails.odds}', style: Theme.of(context).textTheme.titleMedium),
+                            // MODIFIÉ : On formate la cote pour avoir toujours 2 décimales
+                            Text('Cote : ${betDetails.odds.toStringAsFixed(2)}', style: Theme.of(context).textTheme.titleMedium),
                             ElevatedButton(
                               onPressed: () {
                                 Navigator.push(
